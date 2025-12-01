@@ -60,46 +60,6 @@ function App() {
 
   // -- HANDLERS --
 
-// Função para imprimir como imagem única usando canvas
-const printAsImage = () => {
-  const content = document.getElementById('print-root') || document.body;
-  const rect = content.getBoundingClientRect();
-
-  const canvas = document.createElement('canvas');
-  canvas.width = rect.width;
-  canvas.height = rect.height;
-  const ctx = canvas.getContext('2d');
-
-  ctx.scale(1, 1);
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  html2canvas(content).then(canvasResult => {
-    const dataUrl = canvasResult.toDataURL('image/png');
-    const win = window.open('', '_blank');
-    win.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
-    win.document.close();
-    win.focus();
-    win.print();
-  });
-};
-
-// Função para exportar como PDF usando canvas
-const exportAsPDF = () => {
-  const content = document.getElementById('print-root') || document.body;
-  html2canvas(content).then(canvasResult => {
-    const dataUrl = canvasResult.toDataURL('image/png');
-    const pdfWindow = window.open('', '_blank');
-    pdfWindow.document.write(`<!DOCTYPE html><html><head><title>Exportar PDF</title></head><body style='margin:0;'>`);
-    pdfWindow.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
-    pdfWindow.document.write(`</body></html>`);
-    pdfWindow.document.close();
-    pdfWindow.focus();
-    pdfWindow.print();
-  });
-};
-
-
 // Função: NOVOOrcamento
 const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
   e.preventDefault();
@@ -224,7 +184,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
   // -- RENDER --
 
   return (
-    <div id="print-root" className="min-h-screen font-sans text-slate-800 pb-12">
+    <div className="min-h-screen font-sans text-slate-800 pb-12">
       
       {/* Header */}
       <header className="bg-digra-blue sticky top-0 z-40 shadow-xl print:static print:shadow-none print:bg-transparent">
@@ -266,7 +226,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
                 ⚙️ Valores Base
               </button>
               <button 
-                onClick={printAsImage}
+                onClick={() => window.print()}
                 className="px-4 py-2 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors"
               >
                 🖨️ Imprimir
@@ -588,7 +548,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
                Unitário: <b className="text-xl mx-1">{formatCurrency(totals.valorUnitario)}</b>
              </div>
              <div className="flex gap-2 no-print">
-               <button onClick={printAsImage} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">🖨️ PDF</button>
+               <button onClick={() => window.print()} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">🖨️ PDF</button>
                <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-digra-blue hover:bg-blue-50 rounded-lg font-bold transition-colors">⚙️ Editar Base</button>
              </div>
           </div>
