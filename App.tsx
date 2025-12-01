@@ -60,6 +60,37 @@ function App() {
 
   // -- HANDLERS --
 
+// Função: NOVOOrcamento
+const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  e.currentTarget.blur();
+
+  if (!window.confirm('Tem certeza que deseja iniciar um novo orçamento? Esta ação limpará os dados atuais.')) {
+    return;
+  }
+
+  const keys = ['orcamentoAtual', 'itens', 'totais', 'cliente', 'config', 'digra_orcamento_v2_react'];
+  keys.forEach(k => localStorage.removeItem(k));
+  sessionStorage.clear();
+
+  const freshState: AppState = {
+    info: { qtTotal: 1, tamanhoFinal: '', tec: 'DIGITAL', descricao: '', dadosTecnicos: '' },
+    itens: { papeis: [], materiais: [], impressoes: [], maoObra: [] },
+    imagens: [],
+    base: state.base
+  };
+
+  setState(freshState);
+  setTotals(calculateTotals(freshState));
+  setLogoError(false);
+
+  setTimeout(() => {
+    alert('Orçamento resetado com sucesso.');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 50);
+};
+
+
   const updateInfo = (field: keyof AppState['info'], value: any) => {
     setState(prev => ({ ...prev, info: { ...prev.info, [field]: value } }));
   };
@@ -179,6 +210,15 @@ function App() {
              </h1>
            </div>
            <div className="flex gap-3 no-print">
+
+<button
+  type="button"
+  onClick={NOVOOrcamento}
+  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition-all"
+>
+  🔄 Novo
+</button>
+
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="px-4 py-2 bg-white text-digra-blue font-bold rounded-lg shadow hover:bg-blue-50 transition-colors"
