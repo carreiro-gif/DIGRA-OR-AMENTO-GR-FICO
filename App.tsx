@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { INITIAL_BASE_DATA } from './constants';
-import { AppState, ItemPapel, ItemMaterial, ItemImpressao, ItemMaoObra, BaseData } from './types';
+import { AppState, ItemPapel, ItemMaterial, ItemImpressao, ItemMaoObra } from './types';
 import { calculateTotals, formatCurrency, generateId } from './services/utils';
 import { BaseDataModal } from './components/BaseDataModal';
 
-// --- Sub-Components Definition ---
+// --- Sub-Components Definition (Inline for single-file structure preference as requested, but organized) ---
 
-const SectionCard = ({ title, icon, children, className = '' }: { title: string, icon: string, children?: React.ReactNode, className?: string }) => (
+const SectionCard = ({ title, icon, children, className = '' }: { title: string, icon: string, children: React.ReactNode, className?: string }) => (
   <section className={`mb-6 bg-white/95 backdrop-blur rounded-xl shadow-[0_10px_28px_rgba(0,0,0,0.12)] border border-white/40 page-break-avoid ${className}`}>
     <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2 text-digra-blue font-extrabold text-lg">
       <span className="text-xl">{icon}</span>
@@ -14,7 +14,7 @@ const SectionCard = ({ title, icon, children, className = '' }: { title: string,
     
 <style>
 @media print {
-  @page { size: A4 portrait; margin: 12mm; }
+  @page { size: A4 portrait; margin: 10mm; }
   html, body { background: #fff !important; color: #000 !important; width: 210mm; }
   .no-print { display: none !important; }
   .section-card { break-inside: avoid; page-break-inside: avoid; }
@@ -25,23 +25,21 @@ const SectionCard = ({ title, icon, children, className = '' }: { title: string,
 </style>
 
 </div>
-    {children && (
-      <div className="p-5">
-        {children}
-      </div>
-    )}
+    <div className="p-5">
+      {children}
+    </div>
   </section>
 );
 
-const InputGroup = ({ label, children, widthClass }: { label: string, children?: React.ReactNode, widthClass: string }) => (
+const InputGroup = ({ label, children, widthClass }: { label: string, children: React.ReactNode, widthClass: string }) => (
   <div className={`${widthClass} flex flex-col gap-1`}>
     <label className="text-sm font-bold text-slate-500 uppercase tracking-wide">{label}</label>
-    {children && <div className="field-content">{children}</div>}
+    {children}
   </div>
 );
 
 const DeleteBtn = ({ onClick }: { onClick: () => void }) => (
-  <button onClick={onClick} className="h-11 w-11 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-sm transition-colors no-print" title="Remover" type="button">
+  <button onClick={onClick} className="h-11 w-11 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-sm transition-colors no-print" title="Remover">
     🗑️
   </button>
 );
@@ -75,7 +73,7 @@ function App() {
 
   // -- HANDLERS --
 
-// Função para imprimir ajustando para A4
+// Função para imprimir ajustando para A4 em uma única página
 const printA4 = () => {
   const MM_TO_PX = 96 / 25.4;
   const A4_WIDTH_MM = 210;
@@ -103,56 +101,36 @@ const printA4 = () => {
 };
 
 
-  // Função: NOVOOrcamento
-  const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); 
-    e.currentTarget.blur(); // Remove o foco do botão para evitar cliques acidentais duplos
+// Função: NOVOOrcamento
+const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  e.currentTarget.blur();
 
-    // 1. Confirmação
-    if (!window.confirm('Tem certeza que deseja iniciar um novo orçamento? Esta ação limpará os dados atuais.')) {
-      return;
-    }
+  if (!window.confirm('Tem certeza que deseja iniciar um novo orçamento? Esta ação limpará os dados atuais.')) {
+    return;
+  }
 
-    console.log('NOVOOrcamento acionado');
+  const keys = ['orcamentoAtual', 'itens', 'totais', 'cliente', 'config', 'digra_orcamento_v2_react'];
+  keys.forEach(k => localStorage.removeItem(k));
+  sessionStorage.clear();
 
-    // 2. Limpar Storages
-    const keys = ['orcamentoAtual', 'itens', 'totais', 'cliente', 'config', 'digra_orcamento_v2_react'];
-    keys.forEach(k => localStorage.removeItem(k));
-    sessionStorage.clear();
-
-    // 3. Zerar Estados (Mapeando para a estrutura existente do AppState)
-    const freshState: AppState = {
-      info: { 
-        qtTotal: 1, 
-        tamanhoFinal: '', 
-        tec: 'DIGITAL', 
-        descricao: '', // equivale a observacoes
-        dadosTecnicos: '' 
-      },
-      itens: { 
-        papeis: [], 
-        materiais: [], 
-        impressoes: [], 
-        maoObra: [] 
-      },
-      imagens: [],
-      base: state.base // IMPORTANTE: Mantém a base de preços carregada
-    };
-
-    setState(freshState);
-    setLogoError(false);
-    
-    // 4. Feedback e Foco (setTimeout garante que a renderização ocorra antes do alert)
-    setTimeout(() => {
-      alert('Orçamento resetado com sucesso.');
-      
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Tenta focar no input de Cliente se existisse, ou no primeiro input disponível (QtTotal)
-      const targetId = document.getElementById('clienteNome') ? 'clienteNome' : 'input-qtTotal';
-      const el = document.getElementById(targetId);
-      if (el) el.focus();
-    }, 50);
+  const freshState: AppState = {
+    info: { qtTotal: 1, tamanhoFinal: '', tec: 'DIGITAL', descricao: '', dadosTecnicos: '' },
+    itens: { papeis: [], materiais: [], impressoes: [], maoObra: [] },
+    imagens: [],
+    base: state.base
   };
+
+  setState(freshState);
+  setTotals(calculateTotals(freshState));
+  setLogoError(false);
+
+  setTimeout(() => {
+    alert('Orçamento resetado com sucesso.');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 50);
+};
+
 
   const updateInfo = (field: keyof AppState['info'], value: any) => {
     setState(prev => ({ ...prev, info: { ...prev.info, [field]: value } }));
@@ -176,7 +154,7 @@ const printA4 = () => {
       
       // Recalculate Unit Prices based on Base Data selection
       const updatedList = list.map((item: any) => {
-        if (item.id !== id) return item; 
+        if (item.id !== id) return item; // Only process the changed item deeply if needed
 
         let unit = item.unit;
         if (type === 'papeis') {
@@ -206,7 +184,7 @@ const printA4 = () => {
            if (moItem.profIndex !== "") {
              const baseMo = prev.base.maoObra[moItem.profIndex as number];
              if (baseMo) unit = baseMo.hora / 60;
-             return { ...item, minutoValor: unit }; 
+             return { ...item, minutoValor: unit }; // Special case for maoObra field name
            }
         }
         return { ...item, unit };
@@ -253,6 +231,7 @@ const printA4 = () => {
       <header className="bg-digra-blue sticky top-0 z-40 shadow-xl print:static print:shadow-none print:bg-transparent">
         <div className="max-w-[1100px] mx-auto px-4 py-3 flex items-center justify-between">
            <div className="flex items-center gap-4">
+             {/* Logo Logic: Tries to load image, falls back to CSS styled logo if missing */}
              {!logoError ? (
                <img 
                 src="logo-digra.png" 
@@ -265,35 +244,31 @@ const printA4 = () => {
                  <span className="text-white font-bold text-[14px] tracking-tighter">DIGRA</span>
                </div>
              )}
+             
+             {/* Modified Title Style */}
              <h1 className="text-3xl font-extrabold text-white tracking-wide print:text-black">
                Orçamento Gráfico
              </h1>
            </div>
-           
-           <div className="flex gap-3 no-print items-center">
-              {/* Botão Novo Orçamento */}
-              <button
-                type="button"
-                onClick={NOVOOrcamento}
-                className="group px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg hover:shadow-red-500/30 transition-all border border-red-500 flex items-center gap-2"
-                aria-label="Iniciar Novo Orçamento"
-                title="Limpar todos os campos e iniciar novo orçamento"
-              >
-                <span className="group-hover:rotate-180 transition-transform duration-500 text-lg">🔄</span> 
-                <span className="hidden sm:inline text-sm">Novo</span>
-              </button>
+           <div className="flex gap-3 no-print">
+
+<button
+  type="button"
+  onClick={NOVOOrcamento}
+  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition-all"
+>
+  🔄 Novo
+</button>
 
               <button 
-                type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="px-4 py-2 bg-white text-digra-blue font-bold rounded-lg shadow hover:bg-blue-50 transition-colors text-sm sm:text-base"
+                className="px-4 py-2 bg-white text-digra-blue font-bold rounded-lg shadow hover:bg-blue-50 transition-colors"
               >
                 ⚙️ Valores Base
               </button>
               <button 
-                type="button"
                 onClick={printA4}
-                className="px-4 py-2 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors text-sm sm:text-base"
+                className="px-4 py-2 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors"
               >
                 🖨️ Imprimir
               </button>
@@ -303,11 +278,11 @@ const printA4 = () => {
 
       <main className="max-w-[1100px] mx-auto px-4 mt-6 print:mt-0 print:w-full print:max-w-none">
         
+        {/* Info Card */}
         <SectionCard title="Informações Iniciais" icon="📑">
           <div className="grid grid-cols-12 gap-4">
             <InputGroup label="Quantidade Total *" widthClass="col-span-3">
               <input 
-                id="input-qtTotal"
                 type="number" min="1" 
                 value={state.info.qtTotal} 
                 onChange={e => updateInfo('qtTotal', parseInt(e.target.value) || 1)}
@@ -331,7 +306,6 @@ const printA4 = () => {
                     ? 'border-amber-500 bg-amber-50 text-amber-700 shadow-[0_0_0_3px_rgba(245,158,11,0.2)]' 
                     : 'border-slate-200 bg-white text-slate-700 hover:shadow-md'
                   }`}
-                  type="button"
                 >
                   ⚙️ OFFSET
                 </button>
@@ -342,7 +316,6 @@ const printA4 = () => {
                     ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]' 
                     : 'border-slate-200 bg-white text-slate-700 hover:shadow-md'
                   }`}
-                  type="button"
                 >
                   🖨️ DIGITAL
                 </button>
@@ -359,6 +332,7 @@ const printA4 = () => {
               )}
             </InputGroup>
 
+            {/* Adjusted Widths: Reduced to col-span-6 to fit perfectly side-by-side */}
             <InputGroup label="Descrição do Serviço" widthClass="col-span-6">
               <textarea 
                 rows={3}
@@ -378,6 +352,7 @@ const printA4 = () => {
           </div>
         </SectionCard>
 
+        {/* Images Card */}
         <SectionCard title="Imagens do Projeto" icon="🖼️">
           <div 
             className="border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50 min-h-[420px] relative group cursor-pointer flex flex-wrap content-start p-4 gap-4 outline-none focus:border-digra-blue transition-colors"
@@ -409,7 +384,6 @@ const printA4 = () => {
                   onClick={(e) => { e.stopPropagation(); setState(prev => ({...prev, imagens: prev.imagens.filter((_, i) => i !== idx)})); }}
                   className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-lg opacity-0 group-hover/thumb:opacity-100 transition-opacity shadow-md no-print"
                   title="Excluir Imagem"
-                  type="button"
                  >
                    🗑️
                  </button>
@@ -418,9 +392,10 @@ const printA4 = () => {
           </div>
         </SectionCard>
 
+        {/* Papeis */}
         <SectionCard title="Papéis Utilizados" icon="📄">
            <div className="mb-4 no-print">
-             <button onClick={() => addItem('papeis', { id: generateId(), papelIndex: "", tamanho: "", qtd: 0, unit: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors" type="button">
+             <button onClick={() => addItem('papeis', { id: generateId(), papelIndex: "", tamanho: "", qtd: 0, unit: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors">
                + Adicionar Papel
              </button>
            </div>
@@ -455,9 +430,10 @@ const printA4 = () => {
            </div>
         </SectionCard>
 
+        {/* Materiais */}
         <SectionCard title="Materiais Utilizados" icon="🔧">
           <div className="mb-4 no-print">
-             <button onClick={() => addItem('materiais', { id: generateId(), materialIndex: "", tipoIndex: "", qtd: 0, unit: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors" type="button">
+             <button onClick={() => addItem('materiais', { id: generateId(), materialIndex: "", tipoIndex: "", qtd: 0, unit: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors">
                + Adicionar Material
              </button>
            </div>
@@ -505,9 +481,10 @@ const printA4 = () => {
            </div>
         </SectionCard>
 
+        {/* Impressao Digital */}
         <SectionCard title="Impressão Digital" icon="🖨️">
            <div className="mb-4 no-print">
-             <button onClick={() => addItem('impressoes', { id: generateId(), tipo: "", formato: "", qtd: 0, unit: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors" type="button">
+             <button onClick={() => addItem('impressoes', { id: generateId(), tipo: "", formato: "", qtd: 0, unit: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors">
                + Adicionar Impressão
              </button>
            </div>
@@ -545,9 +522,10 @@ const printA4 = () => {
            </div>
         </SectionCard>
 
+        {/* Mao de Obra */}
         <SectionCard title="Mão de Obra" icon="👷">
            <div className="mb-4 no-print">
-             <button onClick={() => addItem('maoObra', { id: generateId(), profIndex: "", minutes: 0, minutoValor: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors" type="button">
+             <button onClick={() => addItem('maoObra', { id: generateId(), profIndex: "", minutes: 0, minutoValor: 0 })} className="px-4 py-2 bg-digra-blue text-white font-bold rounded-lg hover:bg-blue-800 shadow-md transition-colors">
                + Adicionar Profissional
              </button>
            </div>
@@ -572,6 +550,7 @@ const printA4 = () => {
            </div>
         </SectionCard>
 
+        {/* Financial Summary - Match background with Add Buttons (Blue-900/Digra Blue) */}
         <section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-hidden page-break-avoid">
           <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 font-extrabold text-lg">
             <span className="text-xl">💡</span> Resumo Financeiro
@@ -602,6 +581,7 @@ const printA4 = () => {
             </div>
           </div>
           
+          {/* Sticky Bottom Bar for Totals */}
           <div className="bg-white/10 border-t border-white/10 px-6 py-4 flex justify-between items-center print:bg-transparent print:border-black print:text-black">
              <div className="text-lg">
                <strong>Total:</strong> <span className="text-xl font-bold mx-1">{formatCurrency(totals.totalGeral)}</span>
@@ -609,8 +589,8 @@ const printA4 = () => {
                Unitário: <b className="text-xl mx-1">{formatCurrency(totals.valorUnitario)}</b>
              </div>
              <div className="flex gap-2 no-print">
-               <button onClick={printA4} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors" type="button">🖨️ PDF</button>
-               <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-digra-blue hover:bg-blue-50 rounded-lg font-bold transition-colors" type="button">⚙️ Editar Base</button>
+               <button onClick={printA4} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">🖨️ PDF</button>
+               <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-digra-blue hover:bg-blue-50 rounded-lg font-bold transition-colors">⚙️ Editar Base</button>
              </div>
           </div>
         </section>
