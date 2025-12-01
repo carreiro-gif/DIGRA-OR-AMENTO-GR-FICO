@@ -15,12 +15,12 @@ const SectionCard = ({ title, icon, children, className = '' }: { title: string,
 <style>
 @media print {
   @page { size: A4 portrait; margin: 10mm; }
-  html, body { background: #fff !important; color: #000 !important; width: 210mm; }
+  html, body { background: #fff !important; color: #000 !important; width: 210mm; height: 297mm; }
   .no-print { display: none !important; }
   .section-card { break-inside: avoid; page-break-inside: avoid; }
   .shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
   .sticky, .fixed { position: static !important; }
-  #print-root { width: 100%; }
+  #print-root { width: 100%; height: auto; overflow: hidden; }
 }
 </style>
 
@@ -90,11 +90,15 @@ const printA4 = () => {
 
   content.style.transformOrigin = 'top left';
   content.style.transform = `scale(${scale})`;
+  content.style.zoom = scale; // fallback para navegadores que suportam zoom
+  content.style.overflow = 'hidden';
 
   setTimeout(() => {
     window.print();
     setTimeout(() => {
       content.style.transform = '';
+      content.style.zoom = '';
+      content.style.overflow = '';
       content.style.transformOrigin = '';
     }, 100);
   }, 50);
