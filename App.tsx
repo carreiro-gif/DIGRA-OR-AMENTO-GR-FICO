@@ -11,20 +11,7 @@ const SectionCard = ({ title, icon, children, className = '' }: { title: string,
     <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2 text-digra-blue font-extrabold text-lg">
       <span className="text-xl">{icon}</span>
       {title}
-    
-<style>
-@media print {
-  @page { size: A4 portrait; margin: 10mm; }
-  html, body { background: #fff !important; color: #000 !important; width: 210mm; height: 297mm; }
-  .no-print { display: none !important; }
-  .section-card { break-inside: avoid; page-break-inside: avoid; }
-  .shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
-  .sticky, .fixed { position: static !important; }
-  #print-root { width: 100%; height: auto; overflow: hidden; }
-}
-</style>
-
-</div>
+    </div>
     <div className="p-5">
       {children}
     </div>
@@ -73,35 +60,74 @@ function App() {
 
   // -- HANDLERS --
 
-// Função para imprimir ajustando para A4 em uma única página
-const printA4 = () => {
-  const MM_TO_PX = 96 / 25.4;
-  const A4_WIDTH_MM = 210;
-  const A4_HEIGHT_MM = 297;
-  const A4_W_PX = A4_WIDTH_MM * MM_TO_PX;
-  const A4_H_PX = A4_HEIGHT_MM * MM_TO_PX;
+// Função para imprimir como imagem única (A4)
 
-  const content = document.getElementById('print-root') || document.body;
-  const rect = content.getBoundingClientRect();
+// Função para exportar como PDF (gera imagem e insere em PDF)
+const exportAsPDF = () => {
+  const node = document.querySelector('body');
+  const content = document.getElementById('print-root') || node;
 
-  const scaleW = A4_W_PX / rect.width;
-  const scaleH = A4_H_PX / rect.height;
-  const scale = Math.min(scaleW, scaleH, 1);
+  const xmlSerializer = new XMLSerializer();
+  const htmlString = xmlSerializer.serializeToString(content);
 
-  content.style.transformOrigin = 'top left';
-  content.style.transform = `scale(${scale})`;
-  content.style.zoom = scale; // fallback para navegadores que suportam zoom
-  content.style.overflow = 'hidden';
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='1600'>
+    <foreignObject width='100%' height='100%'>${htmlString}</foreignObject>
+  </svg>`;
 
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => {
-      content.style.transform = '';
-      content.style.zoom = '';
-      content.style.overflow = '';
-      content.style.transformOrigin = '';
-    }, 100);
-  }, 50);
+  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const dataUrl = canvas.toDataURL('image/png');
+
+    // Cria um PDF simples usando iframe com embed da imagem
+    const pdfWindow = window.open('', '_blank');
+    pdfWindow.document.write(`<!DOCTYPE html><html><head><title>Exportar PDF</title></head><body style='margin:0;'>`);
+    pdfWindow.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
+    pdfWindow.document.write(`</body></html>`);
+    pdfWindow.document.close();
+    pdfWindow.focus();
+    pdfWindow.print(); // Usuário pode salvar como PDF
+  };
+  img.src = url;
+};
+
+const printAsImage = () => {
+  const node = document.querySelector('body');
+  const content = document.getElementById('print-root') || node;
+
+  const xmlSerializer = new XMLSerializer();
+  const htmlString = xmlSerializer.serializeToString(content);
+
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='1600'>
+    <foreignObject width='100%' height='100%'>${htmlString}</foreignObject>
+  </svg>`;
+
+  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const dataUrl = canvas.toDataURL('image/png');
+
+    const win = window.open('', '_blank');
+    win.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
+    win.document.close();
+    win.focus();
+    win.print();
+  };
+  img.src = url;
 };
 
 
@@ -271,7 +297,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
                 ⚙️ Valores Base
               </button>
               <button 
-                onClick={printA4}
+                onClick={printAsImage}
                 className="px-4 py-2 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors"
               >
                 🖨️ Imprimir
@@ -593,7 +619,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
                Unitário: <b className="text-xl mx-1">{formatCurrency(totals.valorUnitario)}</b>
              </div>
              <div className="flex gap-2 no-print">
-               <button onClick={printA4} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">🖨️ PDF</button>
+               <button onClick={printAsImage} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">🖨️ PDF</button>
                <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-digra-blue hover:bg-blue-50 rounded-lg font-bold transition-colors">⚙️ Editar Base</button>
              </div>
           </div>
