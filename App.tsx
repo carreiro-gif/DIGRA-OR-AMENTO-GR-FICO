@@ -60,74 +60,43 @@ function App() {
 
   // -- HANDLERS --
 
-// Função para imprimir como imagem única (A4)
+// Função para imprimir como imagem única usando canvas
+const printAsImage = () => {
+  const content = document.getElementById('print-root') || document.body;
+  const rect = content.getBoundingClientRect();
 
-// Função para exportar como PDF (gera imagem e insere em PDF)
+  const canvas = document.createElement('canvas');
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  const ctx = canvas.getContext('2d');
+
+  ctx.scale(1, 1);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  html2canvas(content).then(canvasResult => {
+    const dataUrl = canvasResult.toDataURL('image/png');
+    const win = window.open('', '_blank');
+    win.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
+    win.document.close();
+    win.focus();
+    win.print();
+  });
+};
+
+// Função para exportar como PDF usando canvas
 const exportAsPDF = () => {
-  const node = document.querySelector('body');
-  const content = document.getElementById('print-root') || node;
-
-  const xmlSerializer = new XMLSerializer();
-  const htmlString = xmlSerializer.serializeToString(content);
-
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='1600'>
-    <foreignObject width='100%' height='100%'>${htmlString}</foreignObject>
-  </svg>`;
-
-  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-
-  const img = new Image();
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const dataUrl = canvas.toDataURL('image/png');
-
-    // Cria um PDF simples usando iframe com embed da imagem
+  const content = document.getElementById('print-root') || document.body;
+  html2canvas(content).then(canvasResult => {
+    const dataUrl = canvasResult.toDataURL('image/png');
     const pdfWindow = window.open('', '_blank');
     pdfWindow.document.write(`<!DOCTYPE html><html><head><title>Exportar PDF</title></head><body style='margin:0;'>`);
     pdfWindow.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
     pdfWindow.document.write(`</body></html>`);
     pdfWindow.document.close();
     pdfWindow.focus();
-    pdfWindow.print(); // Usuário pode salvar como PDF
-  };
-  img.src = url;
-};
-
-const printAsImage = () => {
-  const node = document.querySelector('body');
-  const content = document.getElementById('print-root') || node;
-
-  const xmlSerializer = new XMLSerializer();
-  const htmlString = xmlSerializer.serializeToString(content);
-
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='1600'>
-    <foreignObject width='100%' height='100%'>${htmlString}</foreignObject>
-  </svg>`;
-
-  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-
-  const img = new Image();
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const dataUrl = canvas.toDataURL('image/png');
-
-    const win = window.open('', '_blank');
-    win.document.write(`<img src='${dataUrl}' style='width:100%;height:auto;'/>`);
-    win.document.close();
-    win.focus();
-    win.print();
-  };
-  img.src = url;
+    pdfWindow.print();
+  });
 };
 
 
