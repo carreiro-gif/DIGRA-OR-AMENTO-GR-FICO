@@ -539,50 +539,56 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
         </SectionCard>
 
         {/* Financial Summary - Match background with Add Buttons (Blue-900/Digra Blue) */}
-        <section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-visible print:overflow-visible print:shadow-none print:rounded-none print:break-inside-auto
-          <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 font-extrabold text-lg">
-            <span className="text-xl">💡</span> Resumo Financeiro
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-12 gap-4 mb-6">
-              {[
-                { l: 'Papéis', v: totals.totalPapeis },
-                { l: 'Materiais', v: totals.totalMateriais },
-                { l: 'Impressão', v: totals.totalImpressoes },
-                { l: 'Mão de Obra', v: totals.totalMaoObra },
-                { l: 'Acréscimo 10%', v: totals.acrescimo },
-                { l: 'TOTAL GERAL', v: totals.totalGeral, highlight: true },
-                { l: 'Valor Unitário', v: totals.valorUnitario, highlight: true },
-                { l: 'Tecnologia', v: state.info.tec, text: true }
-              ].map((k, i) => (
-                 <div key={i} className="col-span-3 bg-white/10 border border-white/10 rounded-lg p-3">
-                   <div className="text-blue-100 font-bold text-sm mb-1">{k.l}</div>
-                   <div className={`text-lg ${k.highlight ? 'font-extrabold text-white' : 'font-semibold text-blue-50'}`}>
-                     {k.text ? k.v : formatCurrency(k.v as number)}
-                   </div>
-                 </div>
-              ))}
-            </div>
-            <div className="bg-white/10 border border-white/10 rounded-xl p-4 text-center">
-               <span className="block font-bold text-blue-100 mb-1">Valor Unitário Final</span>
-               <div className="font-extrabold text-3xl">{formatCurrency(totals.valorUnitario)}</div>
-            </div>
-          </div>
-          
-          {/* Sticky Bottom Bar for Totals */}
-          <div className="bg-white/10 border-t border-white/10 px-6 py-4 flex justify-between items-center print:bg-transparent print:border-black print:text-black">
-             <div className="text-lg">
-               <strong>Total:</strong> <span className="text-xl font-bold mx-1">{formatCurrency(totals.totalGeral)}</span>
-               <span className="mx-2 opacity-50">•</span>
-               Unitário: <b className="text-xl mx-1">{formatCurrency(totals.valorUnitario)}</b>
-             </div>
-             <div className="flex gap-2 no-print">
-               <button onClick={() => window.print()} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">🖨️ PDF</button>
-               <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-digra-blue hover:bg-blue-50 rounded-lg font-bold transition-colors">⚙️ Editar Base</button>
-             </div>
-          </div>
-        </section>
+        {/* Financial Summary */}
+<section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-visible print:overflow-visible print:shadow-none print:rounded-none print:break-inside-auto">
+  <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 font-extrabold text-lg">
+    <span className="text-xl">💡</span> Resumo Financeiro
+  </div>
 
+  <div className="p-6">
+    <div className="grid grid-cols-12 gap-4 mb-6">
+      {[
+        { l: 'Papéis', v: totals.totalPapeis },
+        { l: 'Materiais', v: totals.totalMateriais },
+        { l: 'Impressão', v: totals.totalImpressoes },
+        { l: 'Mão de Obra', v: totals.totalMaoObra },
+        { l: 'Acréscimo 10%', v: totals.acrescimo },
+        { l: 'TOTAL GERAL', v: totals.totalGeral, highlight: true },
+        { l: 'Valor Unitário', v: totals.valorUnitario, highlight: true },
+        { l: 'Tecnologia', v: state.info.tec, text: true }
+      ].map((k, i) => (
+        <div key={i} className="col-span-3 bg-white/10 border border-white/10 rounded-lg p-3">
+          <div className="text-blue-100 font-bold text-sm mb-1">{k.l}</div>
+          <div className={`text-lg ${k.highlight ? 'font-extrabold text-white' : 'font-semibold text-blue-50'}`}>
+            {k.text ? k.v : formatCurrency(k.v as number)}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div className="bg-white/10 border border-white/10 rounded-xl p-4 text-center">
+      <span className="block font-bold text-blue-100 mb-1">Valor Unitário Final</span>
+      <div className="font-extrabold text-3xl">{formatCurrency(totals.valorUnitario)}</div>
+    </div>
+  </div>
+
+  <div className="bg-white/10 border-t border-white/10 px-6 py-4 flex justify-between items-center print:bg-transparent print:border-black print:text-black">
+    <div className="text-lg">
+      <strong>Total:</strong> <span className="text-xl font-bold mx-1">{formatCurrency(totals.totalGeral)}</span>
+      <span className="mx-2 opacity-50">•</span>
+      Unitário: <b className="text-xl mx-1">{formatCurrency(totals.valorUnitario)}</b>
+    </div>
+
+    <div className="flex gap-2 no-print">
+      <button onClick={() => window.print()} className="px-4 py-2 border border-white/40 hover:bg-white/10 rounded-lg font-bold transition-colors">
+        🖨️ PDF
+      </button>
+      <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-digra-blue hover:bg-blue-50 rounded-lg font-bold transition-colors">
+        ⚙️ Editar Base
+      </button>
+    </div>
+  </div>
+</section>
         <footer className="text-center text-slate-500 font-medium py-6">
            ⚡ Alexandre | DIGRA Apps
         </footer>
