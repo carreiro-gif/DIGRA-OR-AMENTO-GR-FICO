@@ -334,7 +334,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
         {/* Images Card */}
         <SectionCard title="Imagens do Projeto" icon="🖼️">
           <div 
-            className="border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50 min-h-[420px] relative group cursor-pointer flex flex-wrap content-start p-4 gap-4 outline-none focus:border-digra-blue transition-colors"
+            className="border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50 min-h-[420px] print:min-h-0 relative group cursor-pointer flex flex-wrap content-start p-4 gap-4 outline-none focus:border-digra-blue transition-colors"
             onClick={() => document.getElementById('fileInput')?.click()}
             tabIndex={0}
           >
@@ -357,7 +357,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
             )}
 
             {state.imagens.map((img, idx) => (
-               <div key={idx} className="relative w-[calc(50%-8px)] h-[380px] bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-sm overflow-hidden group/thumb">
+               <div key={idx} className="relative w-[calc(50%-8px)] h-[380px] print:h-auto bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-sm overflow-hidden group/thumb">
                  <img src={img} alt={`Upload ${idx}`} className="max-w-full max-h-full object-contain" />
                  <button 
                   onClick={(e) => { e.stopPropagation(); setState(prev => ({...prev, imagens: prev.imagens.filter((_, i) => i !== idx)})); }}
