@@ -11,11 +11,11 @@
         extend: {
           colors: {
             digra: {
-              dark: '#0f172a', // Slate 900
-              blue: '#1e3a8a', // Blue 900 (Official Corporate)
-              light: '#f1f5f9', // Slate 100
-              accent: '#0ea5e9', // Sky 500
-              danger: '#ef4444', // Red 500
+              dark: '#0f172a',
+              blue: '#1e3a8a',
+              light: '#f1f5f9',
+              accent: '#0ea5e9',
+              danger: '#ef4444',
             }
           },
           fontFamily: {
@@ -25,44 +25,100 @@
       }
     }
   </script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
     
     body {
-      background-color: #f8fafc; /* Slate 50 */
+      background-color: #f8fafc;
     }
 
-    /* Custom Print Styles for A4 perfection */
+    /* ============================= */
+    /* CORREÇÃO DEFINITIVA DE PRINT  */
+    /* ============================= */
+
     @media print {
+
       @page {
         size: A4 portrait;
         margin: 10mm;
       }
-      body {
-        background: white;
+
+      html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-      .no-print {
+
+      /* Remove limite de largura que corta conteúdo */
+      #root,
+      main,
+      section,
+      div {
+        max-width: 100% !important;
+      }
+
+      /* Remove min-height que causa corte */
+      .min-h-screen {
+        min-height: auto !important;
+      }
+
+      /* Remove overflow que corta partes */
+      .overflow-hidden,
+      .overflow-auto,
+      .overflow-scroll {
+        overflow: visible !important;
+      }
+
+      /* Grid e flex no print podem cortar conteúdo */
+      .grid {
+        display: block !important;
+      }
+
+      .flex {
+        flex-direction: column !important;
+      }
+
+      /* Evita quebrar blocos no meio */
+      .page-break-avoid,
+      section,
+      .card,
+      .shadow,
+      .rounded-xl {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+
+      /* Oculta botões e elementos não imprimíveis */
+      .no-print,
+      button {
         display: none !important;
       }
-      .page-break-avoid {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-      /* Ensure inputs look like text */
+
+      /* Inputs viram texto simples */
       input, textarea, select {
         border: none !important;
         background: transparent !important;
         padding: 0 !important;
-        resize: none; 
+        resize: none;
       }
-      /* Hide scrollbars */
+
+      /* Remove scrollbars */
       ::-webkit-scrollbar {
         display: none;
       }
+
+      /* Imagens não podem estourar página */
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid;
+      }
     }
   </style>
+
 <script type="importmap">
 {
   "imports": {
@@ -72,10 +128,12 @@
   }
 }
 </script>
+
 <link rel="stylesheet" href="/index.css">
 </head>
+
 <body>
   <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
