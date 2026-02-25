@@ -537,7 +537,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
   </div>
 
   <div className="p-6">
-    <div className="grid grid-cols-12 gap-4 mb-6">
+    <div className="grid grid-cols-12 gap-4 mb-6 print:grid-cols-4">
       {[
         { l: 'Papéis', v: totals.totalPapeis },
         { l: 'Materiais', v: totals.totalMateriais },
@@ -548,7 +548,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
         { l: 'Valor Unitário', v: totals.valorUnitario, highlight: true },
         { l: 'Tecnologia', v: state.info.tec, text: true }
       ].map((k, i) => (
-        <div key={i} className="col-span-3 bg-white/10 border border-white/10 rounded-lg p-3">
+        <div key={i} className="col-span-3 print:col-span-1 bg-white/10 border border-white/10 rounded-lg p-3">
           <div className="text-blue-100 font-bold text-sm mb-1">{k.l}</div>
           <div className={`text-lg ${k.highlight ? 'font-extrabold text-white' : 'font-semibold text-blue-50'}`}>
             {k.text ? k.v : formatCurrency(k.v as number)}
