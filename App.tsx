@@ -37,16 +37,7 @@ const SectionCard = ({ title, icon, children, className = '' }: { title: string,
     </div>
   </section>
 );
-    <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2 text-digra-blue font-extrabold text-lg">
-      <span className="text-xl">{icon}</span>
-      {title}
-    </div>
-    <div className="p-5">
-      {children}
-    </div>
-  </section>
-);
-
+    
 const InputGroup = ({ label, children, widthClass }: { label: string, children: React.ReactNode, widthClass: string }) => (
   <div className={`${widthClass} flex flex-col gap-1`}>
     <label className="text-sm font-bold text-slate-500 uppercase tracking-wide">{label}</label>
