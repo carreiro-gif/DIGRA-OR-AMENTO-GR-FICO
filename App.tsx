@@ -7,7 +7,36 @@ import { BaseDataModal } from './components/BaseDataModal';
 // --- Sub-Components Definition (Inline for single-file structure preference as requested, but organized) ---
 
 const SectionCard = ({ title, icon, children, className = '' }: { title: string, icon: string, children: React.ReactNode, className?: string }) => (
-  <section className={`mb-6 bg-white/95 backdrop-blur rounded-xl shadow-[0_10px_28px_rgba(0,0,0,0.12)] border border-white/40 print:break-inside-auto ${className}`}>
+  <section
+    className={`
+      mb-6 
+      bg-white/95 
+      backdrop-blur 
+      rounded-xl 
+      shadow-[0_10px_28px_rgba(0,0,0,0.12)] 
+      border 
+      border-white/40 
+      overflow-visible
+      print:shadow-none 
+      print:rounded-none 
+      print:border 
+      print:border-gray-300
+      print:overflow-visible
+      print:break-inside-auto
+      ${className}
+    `}
+  >
+    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-digra-blue/5 to-digra-accent/5 print:bg-none">
+      <h2 className="text-lg font-semibold text-digra-blue flex items-center gap-2">
+        <span>{icon}</span>
+        {title}
+      </h2>
+    </div>
+    <div className="p-6">
+      {children}
+    </div>
+  </section>
+);
     <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2 text-digra-blue font-extrabold text-lg">
       <span className="text-xl">{icon}</span>
       {title}
@@ -510,7 +539,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
         </SectionCard>
 
         {/* Financial Summary - Match background with Add Buttons (Blue-900/Digra Blue) */}
-        <section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-hidden print:break-inside-auto">
+        <section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-visible print:overflow-visible print:shadow-none print:rounded-none print:break-inside-auto
           <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 font-extrabold text-lg">
             <span className="text-xl">💡</span> Resumo Financeiro
           </div>
