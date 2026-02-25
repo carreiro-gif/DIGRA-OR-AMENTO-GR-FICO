@@ -7,7 +7,7 @@ import { BaseDataModal } from './components/BaseDataModal';
 // --- Sub-Components Definition (Inline for single-file structure preference as requested, but organized) ---
 
 const SectionCard = ({ title, icon, children, className = '' }: { title: string, icon: string, children: React.ReactNode, className?: string }) => (
-  <section className={`mb-6 bg-white/95 backdrop-blur rounded-xl shadow-[0_10px_28px_rgba(0,0,0,0.12)] border border-white/40 page-break-avoid ${className}`}>
+  <section className={`mb-6 bg-white/95 backdrop-blur rounded-xl shadow-[0_10px_28px_rgba(0,0,0,0.12)] border border-white/40 print:break-inside-auto ${className}`}>
     <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2 text-digra-blue font-extrabold text-lg">
       <span className="text-xl">{icon}</span>
       {title}
@@ -510,7 +510,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
         </SectionCard>
 
         {/* Financial Summary - Match background with Add Buttons (Blue-900/Digra Blue) */}
-        <section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-hidden page-break-avoid">
+        <section className="mb-8 bg-digra-blue text-white rounded-xl shadow-2xl border border-white/20 overflow-hidden print:break-inside-auto">
           <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2 font-extrabold text-lg">
             <span className="text-xl">💡</span> Resumo Financeiro
           </div>
