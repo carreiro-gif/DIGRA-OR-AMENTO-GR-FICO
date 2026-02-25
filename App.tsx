@@ -204,7 +204,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
   // -- RENDER --
 
   return (
-    <div className="min-h-screen font-sans text-slate-800 pb-12">
+    <div className="print-area font-sans text-slate-800 pb-12 print:pb-0">
       
       {/* Header */}
       <header className="bg-digra-blue sticky top-0 z-40 shadow-xl print:static print:shadow-none print:bg-transparent">
@@ -255,7 +255,7 @@ const NOVOOrcamento = (e: React.MouseEvent<HTMLButtonElement>) => {
         </div>
       </header>
 
-      <main className="max-w-[1100px] mx-auto px-4 mt-6 print:mt-0 print:w-full print:max-w-none">
+      <main className="max-w-[1100px] mx-auto px-4 mt-6 print:mt-0 print:w-full print:max-w-full">
         
         {/* Info Card */}
         <SectionCard title="Informações Iniciais" icon="📑">
